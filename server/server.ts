@@ -117,7 +117,7 @@ app.get("/exports/status/:taskId", async (req, res) => {
   });
 });
 
-const PORT = 31000;
-app.listen(PORT, () =>
-  console.log(`API server running at http://localhost:${PORT}`)
+const PORT = Number(process.env.PORT || 31000);
+app.listen(PORT, "0.0.0.0", () =>
+  console.log(`API server running at http://0.0.0.0:${PORT}`)
 );

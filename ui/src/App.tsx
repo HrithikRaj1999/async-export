@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API = "http://localhost:31000";
+const API = "/api";
 
 export default function App() {
   const [processId, setProcessId] = useState("6HTsgaZb77zwzQHm4");
