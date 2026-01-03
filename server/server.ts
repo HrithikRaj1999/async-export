@@ -26,14 +26,14 @@ const QUEUE_URL = process.env.SQS_QUEUE_URL!;
 const TABLE = process.env.DDB_TABLE!;
 const PRESIGN_EXPIRES_SEC = Number(process.env.PRESIGN_EXPIRES_SEC || "300");
 const TTL_HOURS = Number(process.env.TASK_TTL_HOURS || "24");
+const api = express.Router();
 
 const sqs = new SQSClient({ region: REGION });
 const s3 = new S3Client({ region: REGION });
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({ region: REGION }));
 
 const nowEpoch = () => Math.floor(Date.now() / 1000);
-
-app.post("/exports/trigger", async (req, res) => {
+api.post("/exports/trigger", async (req, res) => {
   const { processId } = req.body || {};
   if (!processId)
     return res.status(400).json({ error: "processId is required" });
@@ -83,7 +83,7 @@ app.post("/exports/trigger", async (req, res) => {
   });
 });
 
-app.get("/exports/status/:taskId", async (req, res) => {
+api.get("/exports/status/:taskId", async (req, res) => {
   const taskId = req.params.taskId;
 
   const out = await ddb.send(
@@ -116,7 +116,7 @@ app.get("/exports/status/:taskId", async (req, res) => {
     downloadUrl,
   });
 });
-
+app.use("/api", api);
 const PORT = Number(process.env.PORT || 31000);
 app.listen(PORT, "0.0.0.0", () =>
   console.log(`API server running at http://0.0.0.0:${PORT}`)
